@@ -1,0 +1,119 @@
+---
+//TODO
+---
+
+<div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >ID</th
+        >
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >Nombre</th
+        >
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >Precio</th
+        >
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >Cantidad</th
+        >
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >Categoría</th
+        >
+        <th
+          class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >Acciones</th
+        >
+      </tr>
+    </thead>
+    <tbody id="product-table-body" class="bg-white divide-y divide-gray-200">
+      <!-- Aquí se cargarán dinámicamente los productos -->
+      <tr>
+        <td
+          class="px-6 py-4 whitespace-nowrap text-center text-gray-500"
+          colspan="6">Cargando productos...</td
+        >
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  import { productStore } from "../../stores/productStore";
+  import type { Product } from "../../types/Product";
+
+  // Interface para el estado del store
+  interface ProductState {
+    products: Product[];
+    loading: boolean;
+    error: string | null;
+  }
+
+  // Actualizar la tabla cuando cambie el store
+  productStore.subscribe(({ products, loading, error }: ProductState) => {
+    const tableBody = document.getElementById("product-table-body");
+
+    if (!tableBody) return;
+
+    if (loading) {
+      tableBody.innerHTML = `
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-gray-500" colspan="6">Cargando productos...</td>
+        </tr>
+      `;
+      return;
+    }
+
+    if (error) {
+      tableBody.innerHTML = `
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-red-500" colspan="6">Error: ${error}</td>
+        </tr>
+      `;
+      return;
+    }
+
+    if (products.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-gray-500" colspan="6">No hay productos en el inventario</td>
+        </tr>
+      `;
+      return;
+    }
+
+    tableBody.innerHTML = products
+      .map(
+        (product: Product) => `
+      <tr class="product-row">
+        <td class="px-6 py-4 whitespace-nowrap">${product.id}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${product.name}</td>
+        <td class="px-6 py-4 whitespace-nowrap">$${product.price.toFixed(2)}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${product.quantity || 0}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${product.category || "-"}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <button 
+            class="edit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2"
+            data-id="${product.id}"
+          >
+            Editar
+          </button>
+          <button 
+            class="delete-btn bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+            data-id="${product.id}"
+          >
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    `
+      )
+      .join("");
+  });
+</script>
