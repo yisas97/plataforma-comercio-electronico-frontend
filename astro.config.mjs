@@ -1,20 +1,17 @@
-// @ts-check
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
-
-import auth from 'auth-astro';
-
 import tailwindcss from '@tailwindcss/vite';
 import netlify from '@astrojs/netlify';
 
-import db from '@astrojs/db';
-
 // https://astro.build/config
 export default defineConfig({
-  integrations: [auth(), db()],
+  integrations: [],
   output: "server",
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    define: {
+      'import.meta.env.BACKEND_SECURITY_API_URL': JSON.stringify(process.env.BACKEND_SECURITY_API_URL),
+    },
   },
-
   adapter: netlify()
 });

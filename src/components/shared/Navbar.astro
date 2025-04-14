@@ -1,12 +1,8 @@
 ---
-const { isLoggedIn, isAdmin } = Astro.locals;
+// No hay nada especial aquí, ya que el estado real se determina en el cliente
 ---
 
-<!-- component -->
-<nav
-  class="flex justify-between px-20 py-10 items-center fixed top-0 w-full z-10 h-20"
-  style="background-color: #F9F9F9;"
->
+<nav class="flex justify-between px-20 py-10 items-center fixed top-0 w-full z-10 h-20" style="background-color: #F9F9F9;">
   <h1 class="text-xl text-gray-800 font-bold">
     <a href="/">Plataforma Control Comercio</a>
   </h1>
@@ -15,44 +11,54 @@ const { isLoggedIn, isAdmin } = Astro.locals;
       <li class="font-semibold text-gray-700">
         <a href="/">Home</a>
       </li>
-      {
-        isAdmin && (
-          <li class="font-semibold text-gray-700">
-            <a href="/admin/dashboard">Admin</a>
-          </li>
-        )
-      }
-
-      {
-        isLoggedIn && (
-          <li class="font-semibold text-gray-700">
-            <a href="/inventario">Inventario</a>
-          </li>
-        )
-      }
-
-      {
-        !isLoggedIn ? (
-          <li class="font-semibold text-gray-700">
-            <a href="/login">Ingresar</a>
-          </li>
-        ) : (
-          <li id="logout" class="font-semibold text-gray-700">
-            <a href="#">Salir</a>
-          </li>
-        )
-      }
+      <li id="admin-link" class="font-semibold text-gray-700 hidden">
+        <a href="/admin/dashboard">Admin</a>
+      </li>
+      <li id="admin-categories-link" class="font-semibold text-gray-700 hidden">
+        <a href="/admin/categorias">Categorías</a>
+      </li>
+      <li id="admin-tags-link" class="font-semibold text-gray-700 hidden">
+        <a href="/admin/etiquetas">Etiquetas</a>
+      </li>
+      <li id="aprobaciones-productores-link" class="font-semibold text-gray-700 hidden">
+        <a href="/admin/aprobacion-productor">Aprobaciones</a>
+      </li>
+      <li id="inventario-link" class="font-semibold text-gray-700 hidden">
+        <a href="/inventario">Inventario</a>
+      </li>
+      <li id="login-link" class="font-semibold text-gray-700">
+        <a href="/login">Ingresar</a>
+      </li>
+      <li id="logout-link" class="font-semibold text-gray-700 hidden">
+        <a href="#" id="logout-button">Salir</a>
+      </li>
     </ul>
   </div>
 </nav>
 
-<script>
-  const { signOut } = await import("auth-astro/client");
+<script is:inline>
+  (async function() {
+    const { isAuthenticated, isAdmin, logout } = await import('/js/auth-client.js');
 
-  const logoutElem = document.querySelector("#logout") as HTMLLIElement;
+    function updateNavLinks() {
+      const loggedIn = isAuthenticated();
+      const adminUser = isAdmin();
 
-  logoutElem?.addEventListener("click", async () => {
-    await signOut();
-    window.location.href = "/";
-  });
+      document.getElementById('login-link')?.classList.toggle('hidden', loggedIn);
+      document.getElementById('logout-link')?.classList.toggle('hidden', !loggedIn);
+      document.getElementById('inventario-link')?.classList.toggle('hidden', !loggedIn);
+      document.getElementById('aprobaciones-productores-link')?.classList.toggle('hidden', !adminUser);
+      document.getElementById('admin-link')?.classList.toggle('hidden', !adminUser);
+      document.getElementById('admin-categories-link')?.classList.toggle('hidden', !adminUser);
+      document.getElementById('admin-tags-link')?.classList.toggle('hidden', !adminUser);
+    }
+
+    updateNavLinks();
+
+    document.getElementById('logout-button')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+      window.location.href = '/';
+    });
+  })();
 </script>

@@ -1,9 +1,10 @@
 /// <reference types="astro/client" />
 
 interface User {
+  id: number;
   name: string;
   email: string;
-  // TODO:
+  role: string;
 }
 
 declare namespace App {
@@ -12,4 +13,12 @@ declare namespace App {
     isAdmin: boolean;
     user: User | null;
   }
+}
+
+interface ImportMetaEnv {
+  readonly PUBLIC_BACKEND_API_URL: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }

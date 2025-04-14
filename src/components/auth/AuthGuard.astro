@@ -1,0 +1,15 @@
+---
+const { requireAdmin = false } = Astro.props;
+---
+
+<script is:inline define:vars={{ requireAdmin }}>
+    (async function() {
+        const { isAuthenticated, isAdmin } = await import('/js/auth-client.js');
+
+        if (!isAuthenticated()) {
+            window.location.href = '/login';
+        } else if (requireAdmin && !isAdmin()) {
+            window.location.href = '/unauthorized';
+        }
+    })();
+</script>
