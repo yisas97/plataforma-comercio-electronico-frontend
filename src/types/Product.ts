@@ -8,4 +8,18 @@ export interface Product {
   sku?: string;
   createdAt?: string;
   updatedAt?: string;
+  categoryIds: number[];
+  tagIds: number[];
+  productCategories?: Array<{
+    category: {
+      id: number;
+      name: string;
+    }
+  }>;
+  productTags?: Array<{
+    tag: {
+      id: number;
+      name: string;
+    }
+  }>;
 }

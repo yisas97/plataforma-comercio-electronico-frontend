@@ -1,0 +1,318 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import AuthGuard from "../../components/auth/AuthGuard.astro";
+---
+
+<AuthGuard requireAdmin={true} />
+<MainLayout title="Administración de Categorías">
+    <div class="admin-container">
+        <h1 class="text-3xl font-bold mb-8">Administración de Categorías</h1>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-xl font-semibold mb-4">Añadir Nueva Categoría</h2>
+            <form id="category-form" class="space-y-4">
+                <input type="hidden" id="category-id" />
+                <div>
+                    <label for="category-name" class="block text-sm font-medium text-gray-700">Nombre *</label>
+                    <input
+                            type="text"
+                            id="category-name"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+                            required
+                    />
+                </div>
+                <div>
+                    <label for="category-description" class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <textarea
+                            id="category-description"
+                            rows="3"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+                    ></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button
+                            type="button"
+                            id="cancel-btn"
+                            class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md mr-2 hidden"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                            type="submit"
+                            id="submit-btn"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md"
+                    >
+                        Guardar Categoría
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Lista de Categorías</h2>
+                <div class="search-container">
+                    <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Buscar categoría..."
+                            class="px-4 py-2 border rounded-lg"
+                    />
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Creación</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categories-table-body" class="bg-white divide-y divide-gray-200">
+                    <!-- Aquí se cargarán las categorías dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="no-categories-message" class="hidden text-center py-4 text-gray-500">
+                No hay categorías disponibles.
+            </div>
+        </div>
+    </div>
+</MainLayout>
+
+<script>
+    import Swal from "sweetalert2";
+    import { fetchCategories, searchCategories, createCategory, updateCategory, deleteCategory } from "../../services/category.service";
+    import { categoryStore } from "../../stores/category.store";
+
+    // Elementos del DOM
+    const categoryForm = document.getElementById("category-form");
+    const categoryIdInput = document.getElementById("category-id");
+    const categoryNameInput = document.getElementById("category-name");
+    const categoryDescriptionInput = document.getElementById("category-description");
+    const submitButton = document.getElementById("submit-btn");
+    const cancelButton = document.getElementById("cancel-btn");
+    const searchInput = document.getElementById("search-input");
+    const categoriesTableBody = document.getElementById("categories-table-body");
+    const noCategoriesMessage = document.getElementById("no-categories-message");
+
+    // Estado de edición
+    let isEditing = false;
+
+    // Cargar categorías al iniciar la página
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const categories = await fetchCategories();
+            categoryStore.set({ categories });
+            renderCategories(categories);
+        } catch (error) {
+            console.error("Error loading categories:", error);
+            Swal.fire({
+                icon: "error",
+                title: "¡Error!",
+                text: "No se pudieron cargar las categorías",
+            });
+        }
+
+        // Setup del buscador
+        if (searchInput) {
+            searchInput.addEventListener("input", async (e) => {
+                const searchTerm = e.target.value.trim();
+
+                try {
+                    let categories;
+                    if (searchTerm) {
+                        categories = await searchCategories(searchTerm);
+                    } else {
+                        categories = await fetchCategories();
+                    }
+                    renderCategories(categories);
+                } catch (error) {
+                    console.error("Error searching categories:", error);
+                }
+            });
+        }
+    });
+
+    // Manejar envío del formulario
+    categoryForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const categoryData = {
+            name: categoryNameInput.value,
+            description: categoryDescriptionInput.value
+        };
+
+        try {
+            if (isEditing) {
+                // Actualizar categoría existente
+                await updateCategory(categoryIdInput.value, categoryData);
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Actualizado!",
+                    text: "La categoría ha sido actualizada correctamente",
+                });
+            } else {
+                // Crear nueva categoría
+                await createCategory(categoryData);
+                Swal.fire({
+                    icon: "success",
+                    title: "¡Creado!",
+                    text: "La categoría ha sido creada correctamente",
+                });
+            }
+
+            // Resetear formulario y recargar categorías
+            resetForm();
+            const categories = await fetchCategories();
+            categoryStore.set({ categories });
+            renderCategories(categories);
+        } catch (error) {
+            console.error("Error saving category:", error);
+            Swal.fire({
+                icon: "error",
+                title: "¡Error!",
+                text: isEditing
+                    ? "No se pudo actualizar la categoría"
+                    : "No se pudo crear la categoría",
+            });
+        }
+    });
+
+    // Botón Cancelar (volver al modo creación)
+    cancelButton.addEventListener("click", () => {
+        resetForm();
+    });
+
+    // Renderizar categorías en la tabla
+    function renderCategories(categories) {
+        if (!categoriesTableBody) return;
+
+        categoriesTableBody.innerHTML = "";
+
+        if (!categories || categories.length === 0) {
+            noCategoriesMessage.classList.remove("hidden");
+            return;
+        }
+
+        noCategoriesMessage.classList.add("hidden");
+
+        categories.forEach(category => {
+            const row = document.createElement("tr");
+            row.className = "category-row";
+
+            // Formatear fecha
+            const createdDate = new Date(category.createdAt);
+            const formattedDate = createdDate.toLocaleDateString();
+
+            row.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">${category.id}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${category.name}</td>
+        <td class="px-6 py-4">${category.description || '-'}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${formattedDate}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <button class="edit-btn text-blue-600 hover:text-blue-800 mr-3" data-id="${category.id}">
+            Editar
+          </button>
+          <button class="delete-btn text-red-600 hover:text-red-800" data-id="${category.id}">
+            Eliminar
+          </button>
+        </td>
+      `;
+
+            categoriesTableBody.appendChild(row);
+        });
+
+        // Agregar event listeners a los botones
+        setupActionButtons();
+    }
+
+    // Configurar botones de acción (editar/eliminar)
+    function setupActionButtons() {
+        // Botones de editar
+        document.querySelectorAll(".edit-btn").forEach(button => {
+            button.addEventListener("click", handleEditCategory);
+        });
+
+        // Botones de eliminar
+        document.querySelectorAll(".delete-btn").forEach(button => {
+            button.addEventListener("click", handleDeleteCategory);
+        });
+    }
+
+    // Manejar click en botón editar
+    function handleEditCategory(e) {
+        const categoryId = e.target.dataset.id;
+        const categories = categoryStore.get().categories;
+        const categoryToEdit = categories.find(c => c.id == categoryId);
+
+        if (categoryToEdit) {
+            // Llenar formulario con datos de la categoría
+            categoryIdInput.value = categoryToEdit.id;
+            categoryNameInput.value = categoryToEdit.name;
+            categoryDescriptionInput.value = categoryToEdit.description || "";
+
+            // Cambiar estado y textos
+            isEditing = true;
+            submitButton.textContent = "Actualizar Categoría";
+            cancelButton.classList.remove("hidden");
+
+            // Scroll al formulario
+            document.querySelector(".admin-container").scrollIntoView({ behavior: "smooth" });
+        }
+    }
+
+    // Manejar click en botón eliminar
+    async function handleDeleteCategory(e) {
+        const categoryId = e.target.dataset.id;
+
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción no se puede revertir. Los productos relacionados perderán esta categoría.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await deleteCategory(categoryId);
+
+                    // Actualizar la lista de categorías
+                    const categories = await fetchCategories();
+                    categoryStore.set({ categories });
+                    renderCategories(categories);
+
+                    Swal.fire(
+                        "¡Eliminada!",
+                        "La categoría ha sido eliminada.",
+                        "success"
+                    );
+                } catch (error) {
+                    console.error("Error deleting category:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "¡Error!",
+                        text: "No se pudo eliminar la categoría",
+                    });
+                }
+            }
+        });
+    }
+
+    // Resetear formulario a estado inicial
+    function resetForm() {
+        categoryForm.reset();
+        categoryIdInput.value = "";
+        isEditing = false;
+        submitButton.textContent = "Guardar Categoría";
+        cancelButton.classList.add("hidden");
+    }
+</script>

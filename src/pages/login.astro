@@ -1,5 +1,6 @@
 ---
 import AuthLayout from '@/layouts/AuthLayout.astro';
+import { loginUser } from '@/actions/login.actions';
 ---
 
 <AuthLayout>
@@ -9,16 +10,16 @@ import AuthLayout from '@/layouts/AuthLayout.astro';
         <h3 class="font-semibold text-2xl text-gray-800">Login</h3>
         <p class="text-gray-500">Por favor, ingresa tu cuenta.</p>
       </div>
-      <form class="space-y-5">
+      <form class="space-y-5" id="login-form">
         <div class="space-y-2">
           <label class="text-sm font-medium text-gray-700 tracking-wide"
-            >Email</label
+          >Email</label
           >
           <input
-            class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
-            type="email"
-            name="email"
-            placeholder="email@gmail.com"
+              class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+              type="email"
+              name="email"
+              placeholder="email@gmail.com"
           />
         </div>
         <div class="space-y-2">
@@ -26,42 +27,28 @@ import AuthLayout from '@/layouts/AuthLayout.astro';
             Password
           </label>
           <input
-            class="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
-            type="password"
-            name="password"
-            placeholder="Ingresa tu contraseña"
+              class="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+              type="password"
+              name="password"
+              placeholder="Ingresa tu contraseña"
           />
         </div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember_me"
-              name="remember_me"
-              type="checkbox"
-              class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded"
-            />
-            <label for="remember_me" class="ml-2 block text-sm text-gray-800">
-              Recuerdame
-            </label>
-          </div>
+        <div>
           <div class="text-sm">
             <a href="/register" class="text-green-400 hover:text-green-500">
               ¿No tienes cuenta?
             </a>
           </div>
         </div>
+        <hr/>
         <div>
           <button
-            type="submit"
-            id="btn-submit"
-            class="disabled:bg-gray-300 w-full flex justify-center bg-green-400 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
+              type="submit"
+              id="btn-submit"
+              class="disabled:bg-gray-300 w-full flex justify-center bg-green-400 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
           >
             Ingresar
           </button>
-
-          <!-- <div class="flex flex-1 w-full my-3">
-            <div class="w-full border-t-2 border-gray-500"></div>
-          </div> -->
         </div>
       </form>
     </div>
@@ -69,63 +56,60 @@ import AuthLayout from '@/layouts/AuthLayout.astro';
 </AuthLayout>
 
 <script>
-  import { actions } from 'astro:actions';
   import Swal from 'sweetalert2';
+  import { login, setSession } from '@/services/auth.service';
 
-  const form = document.querySelector('form') as HTMLFormElement;
+  document.addEventListener('DOMContentLoaded', () => {
+    // Redireccionar si ya está autenticado
+    if (localStorage.getItem('token')) {
+      redirectBasedOnRole();
+    }
+  });
+
+  const form = document.querySelector('#login-form') as HTMLFormElement;
   const btnSubmit = document.querySelector('#btn-submit') as HTMLButtonElement;
-  const bntGoogle = document.querySelector('#btn-google') as HTMLButtonElement;
-
-  const { signIn } = await import('auth-astro/client');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     btnSubmit.setAttribute('disabled', 'disabled');
+    btnSubmit.textContent = 'Iniciando sesión...';
 
     const formData = new FormData(form);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
 
-    const resp = await signIn('credentials', {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      redirect: false,
-    } as any);
+    try {
+      const response = await login({ email, password });
 
-    console.log({ resp });
+      // Guardar token y datos de usuario
+      setSession(response);
 
-    if (resp) {
+      // Redireccionar según el rol
+      redirectBasedOnRole();
+    } catch (error) {
+      console.error(error);
       Swal.fire({
         icon: 'error',
         title: 'Error al ingresar',
-        // text: error.message,
-        text: 'Usuario / Contraseña no son correctos',
+        text: error.message || 'Usuario/Contraseña incorrectos',
       });
       btnSubmit.removeAttribute('disabled');
-      return;
-    }
-
-    // TODO:
-    window.location.replace('/');
-  });
-
-  bntGoogle.addEventListener('click', async () => {
-    bntGoogle.setAttribute('disabled', 'disabled');
-
-    try {
-      //! Paso 1: obtener la credenciales del lado del cliente
-
-      // Paso 2: Vericar las credenciales en el backend
-
-      if (true) {
-        alert('error.message');
-        bntGoogle.removeAttribute('disabled');
-        return;
-      }
-
-      bntGoogle.innerText = 'Redireccionando...';
-      window.location.replace('/protected');
-    } catch (error) {
-      console.log(error);
-      bntGoogle.removeAttribute('disabled');
+      btnSubmit.textContent = 'Ingresar';
     }
   });
+
+  function redirectBasedOnRole() {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return;
+
+    const user = JSON.parse(userStr);
+
+    if (user.role === 'ROLE_ADMIN') {
+      window.location.href = '/admin/dashboard';
+    } else if (user.role === 'ROLE_PRODUCER') {
+      window.location.href = '/productor-local/dashboard';
+    } else {
+      window.location.href = '/';
+    }
+  }
 </script>

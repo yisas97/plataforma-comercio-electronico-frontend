@@ -1,0 +1,435 @@
+---
+import AuthLayout from '@/layouts/AuthLayout.astro';
+---
+
+<AuthLayout>
+    <div class="flex justify-center self-center z-10">
+        <div class="p-8 bg-white mx-auto rounded-2xl w-100 max-w-md">
+
+            <!-- Tabs -->
+            <div class="flex mb-6 border-b">
+                <button id="login-tab" class="flex-1 py-2 font-medium text-gray-500 hover:text-green-500">
+                    Iniciar Sesión
+                </button>
+                <button id="register-tab" class="flex-1 py-2 font-medium text-green-500 border-b-2 border-green-400">
+                    Registro
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-content" class="hidden">
+                <div class="mb-4">
+                    <h3 class="font-semibold text-2xl text-gray-800">Iniciar Sesión</h3>
+                    <p class="text-gray-500">Accede a tu cuenta de productor local.</p>
+                </div>
+
+                <form class="space-y-5" id="login-form">
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">Email</label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="email"
+                                name="email"
+                                placeholder="mail@gmail.com"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide">
+                            Contraseña
+                        </label>
+                        <input
+                                class="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="password"
+                                name="password"
+                                placeholder="Ingresa tu contraseña"
+                                required
+                        />
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input
+                                    id="remember_me_login"
+                                    name="remember_me"
+                                    type="checkbox"
+                                    class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                            />
+                            <label for="remember_me_login" class="ml-2 block text-sm text-gray-800">
+                                Recuérdame
+                            </label>
+                        </div>
+                        <div class="text-sm">
+                            <a href="#" class="text-green-400 hover:text-green-500">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                                type="submit"
+                                id="btn-login"
+                                class="w-full flex justify-center bg-green-400 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
+                        >
+                            Ingresar
+                        </button>
+                    </div>
+                    <div class="text-center text-sm">
+                        <a href="/login" id="ir-login" class="text-green-400 hover:text-green-500">
+                            ¿No era un productor local? Inicia sesión como cliente
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-content">
+                <div class="mb-4">
+                    <h3 class="font-semibold text-2xl text-gray-800">Registro</h3>
+                    <p class="text-gray-500">Crea tu cuenta de productor local.</p>
+                </div>
+
+                <form class="space-y-4" id="register-form">
+                    <!-- Información personal -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Nombre del Negocio
+                        </label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="text"
+                                name="business_name"
+                                placeholder="Mi Tienda Local"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Nombre Completo
+                        </label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="text"
+                                name="name"
+                                placeholder="Jesus Campos"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Email
+                        </label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="email"
+                                name="email"
+                                placeholder="mail@gmail.com"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Teléfono
+                        </label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="tel"
+                                name="phone"
+                                placeholder="+1234567890"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Dirección
+                        </label>
+                        <input
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="text"
+                                name="address"
+                                placeholder="Calle Principal #123"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Tipo de Productos
+                        </label>
+                        <select
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                name="product_type"
+                                required
+                        >
+                            <option value="">Seleccione una categoría</option>
+                            <option value="agriculture">Productos Agrícolas</option>
+                            <option value="dairy">Lácteos</option>
+                            <option value="meat">Carnes</option>
+                            <option value="bakery">Panadería</option>
+                            <option value="crafts">Artesanías</option>
+                            <option value="other">Otros</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Descripción del Negocio
+                        </label>
+                        <textarea
+                                class="w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                name="description"
+                                rows="3"
+                                placeholder="Cuéntanos sobre tu negocio y tus productos"
+                        ></textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide">
+                            Contraseña
+                        </label>
+                        <input
+                                class="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="password"
+                                name="password"
+                                placeholder="Crea una contraseña segura"
+                                required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="mb-5 text-sm font-medium text-gray-700 tracking-wide">
+                            Confirmar Contraseña
+                        </label>
+                        <input
+                                class="w-full content-center text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400"
+                                type="password"
+                                name="confirm_password"
+                                placeholder="Repite tu contraseña"
+                                required
+                        />
+                    </div>
+
+                    <!-- Sección de documentación -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-700 tracking-wide">
+                            Documentación
+                        </label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
+                                     viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="flex text-sm text-gray-600 justify-center">
+                                    <label for="file-upload"
+                                           class="relative cursor-pointer bg-white rounded-md font-medium text-green-500 hover:text-green-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+                                        <span>Sube un archivo</span>
+                                        <input id="file-upload" name="documentation" type="file" class="sr-only">
+                                    </label>
+                                    <p class="pl-1">o arrastra y suelta</p>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    PNG, JPG, PDF hasta 10MB
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500">Adjunta documentos que verifiquen tu identidad y negocio
+                            (licencia comercial, certificaciones, etc.)</p>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input
+                                id="terms"
+                                name="terms"
+                                type="checkbox"
+                                required
+                                class="h-4 w-4 bg-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                        />
+                        <label for="terms" class="ml-2 block text-sm text-gray-800">
+                            Acepto los <a href="#" class="text-green-400 hover:text-green-500">términos y
+                            condiciones</a>
+                        </label>
+                    </div>
+
+                    <div>
+                        <button
+                                type="submit"
+                                id="btn-register"
+                                class="w-full flex justify-center bg-green-400 hover:bg-green-500 text-gray-100 p-3 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500"
+                        >
+                            Crear Cuenta
+                        </button>
+                    </div>
+
+                    <div class="text-center text-sm">
+                        <a href="#" id="to-login" class="text-green-400 hover:text-green-500">
+                            ¿Ya tienes una cuenta? Inicia sesión
+                        </a>
+                    </div>
+                    <div class="text-center text-sm">
+                        <a href="/login" id="ir-login2" class="text-green-400 hover:text-green-500">
+                            ¿No era un productor local? Inicia sesión como cliente
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</AuthLayout>
+
+<script>
+    import {actions} from 'astro:actions';
+    import Swal from 'sweetalert2';
+
+    // Referencias a los elementos
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginContent = document.getElementById('login-content');
+    const registerContent = document.getElementById('register-content');
+    const toLogin = document.getElementById('to-login');
+
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const btnLogin = document.getElementById('btn-login');
+    const btnRegister = document.getElementById('btn-register');
+
+    // Función para mostrar Login
+    function showLogin() {
+        loginContent.classList.remove('hidden');
+        registerContent.classList.add('hidden');
+        loginTab.classList.add('text-green-500', 'border-b-2', 'border-green-400');
+        loginTab.classList.remove('text-gray-500');
+        registerTab.classList.add('text-gray-500');
+        registerTab.classList.remove('text-green-500', 'border-b-2', 'border-green-400');
+    }
+
+    // Función para mostrar Registro
+    function showRegister() {
+        registerContent.classList.remove('hidden');
+        loginContent.classList.add('hidden');
+        registerTab.classList.add('text-green-500', 'border-b-2', 'border-green-400');
+        registerTab.classList.remove('text-gray-500');
+        loginTab.classList.add('text-gray-500');
+        loginTab.classList.remove('text-green-500', 'border-b-2', 'border-green-400');
+    }
+
+    // Eventos de cambio de pestaña
+    loginTab.addEventListener('click', showLogin);
+    registerTab.addEventListener('click', showRegister);
+    toLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        showLogin();
+    });
+
+    // Por defecto mostrar el registro (según tu diseño original)
+    // Si prefieres mostrar login primero, llama a showLogin() en lugar de showRegister()
+    showRegister();
+
+    // Manejo del formulario de Login
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btnLogin.setAttribute('disabled', 'disabled');
+        btnLogin.classList.add('bg-gray-300');
+        btnLogin.classList.remove('bg-green-400', 'hover:bg-green-500');
+
+        const formData = new FormData(loginForm);
+
+        try {
+            const {error} = await actions.loginUser(formData);
+
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de inicio de sesión',
+                    text: error.message || 'Credenciales incorrectas',
+                });
+                btnLogin.removeAttribute('disabled');
+                btnLogin.classList.remove('bg-gray-300');
+                btnLogin.classList.add('bg-green-400', 'hover:bg-green-500');
+                return;
+            }
+
+            window.location.replace('/dashboard');
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ha ocurrido un error. Inténtalo nuevamente.',
+            });
+            btnLogin.removeAttribute('disabled');
+            btnLogin.classList.remove('bg-gray-300');
+            btnLogin.classList.add('bg-green-400', 'hover:bg-green-500');
+        }
+    });
+
+    // Manejo del formulario de Registro
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btnRegister.setAttribute('disabled', 'disabled');
+        btnRegister.classList.add('bg-gray-300');
+        btnRegister.classList.remove('bg-green-400', 'hover:bg-green-500');
+
+        const formData = new FormData(registerForm);
+
+        // Validar que las contraseñas coincidan
+        const password = formData.get('password');
+        const confirmPassword = formData.get('confirm_password');
+
+        if (password !== confirmPassword) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de registro',
+                text: 'Las contraseñas no coinciden',
+            });
+            btnRegister.removeAttribute('disabled');
+            btnRegister.classList.remove('bg-gray-300');
+            btnRegister.classList.add('bg-green-400', 'hover:bg-green-500');
+            return;
+        }
+
+        try {
+            const {error} = await actions.registerUser(formData);
+
+            if (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de registro',
+                    text: error.message || 'No se pudo completar el registro',
+                });
+                btnRegister.removeAttribute('disabled');
+                btnRegister.classList.remove('bg-gray-300');
+                btnRegister.classList.add('bg-green-400', 'hover:bg-green-500');
+                return;
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Registro enviado',
+                text: 'Tu solicitud ha sido enviada y está pendiente de aprobación. Te notificaremos por correo electrónico cuando sea revisada.',
+            }).then(() => {
+                showLogin();
+            });
+
+            registerForm.reset();
+            btnRegister.removeAttribute('disabled');
+            btnRegister.classList.remove('bg-gray-300');
+            btnRegister.classList.add('bg-green-400', 'hover:bg-green-500');
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ha ocurrido un error. Inténtalo nuevamente.',
+            });
+            btnRegister.removeAttribute('disabled');
+            btnRegister.classList.remove('bg-gray-300');
+            btnRegister.classList.add('bg-green-400', 'hover:bg-green-500');
+        }
+    });
+</script>

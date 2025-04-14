@@ -1,173 +1,416 @@
 ---
-// Este componente maneja la creación y actualización de productos
+// Este componente se usará para crear/editar productos
 ---
 
 <form id="product-form" class="space-y-4">
-  <input type="hidden" id="product-id" name="id" value="" />
+  <input type="hidden" id="product-id" />
 
   <div>
-    <label for="product-name" class="block text-sm font-medium text-gray-700"
-      >Nombre *</label
-    >
+    <label for="product-name" class="block text-sm font-medium text-gray-700">Nombre *</label>
     <input
-      type="text"
-      id="product-name"
-      name="name"
-      required
-      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        type="text"
+        id="product-name"
+        name="name"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+        required
     />
   </div>
 
   <div>
-    <label for="product-price" class="block text-sm font-medium text-gray-700"
-      >Precio *</label
-    >
-    <div class="mt-1 relative rounded-md shadow-sm">
-      <div
-        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-      >
-        <span class="text-gray-500 sm:text-sm">$</span>
-      </div>
-      <input
+    <label for="product-price" class="block text-sm font-medium text-gray-700">Precio *</label>
+    <input
         type="number"
         id="product-price"
         name="price"
-        required
+        min="0"
         step="0.01"
-        min="0.01"
-        class="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-      />
-    </div>
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+        required
+    />
   </div>
 
   <div>
-    <label
-      for="product-description"
-      class="block text-sm font-medium text-gray-700">Descripción</label
-    >
+    <label for="product-description" class="block text-sm font-medium text-gray-700">Descripción</label>
     <textarea
-      id="product-description"
-      name="description"
-      rows="3"
-      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        id="product-description"
+        name="description"
+        rows="3"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
     ></textarea>
   </div>
 
   <div>
-    <label
-      for="product-quantity"
-      class="block text-sm font-medium text-gray-700">Cantidad</label
-    >
+    <label for="product-quantity" class="block text-sm font-medium text-gray-700">Cantidad</label>
     <input
-      type="number"
-      id="product-quantity"
-      name="quantity"
-      min="0"
-      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        type="number"
+        id="product-quantity"
+        name="quantity"
+        min="0"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
     />
   </div>
 
   <div>
-    <label
-      for="product-category"
-      class="block text-sm font-medium text-gray-700">Categoría</label
-    >
+    <label for="product-sku" class="block text-sm font-medium text-gray-700">SKU</label>
     <input
-      type="text"
-      id="product-category"
-      name="category"
-      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        type="text"
+        id="product-sku"
+        name="sku"
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
     />
   </div>
 
   <div>
-    <label for="product-sku" class="block text-sm font-medium text-gray-700"
-      >SKU</label
-    >
-    <input
-      type="text"
-      id="product-sku"
-      name="sku"
-      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-    />
+    <label class="block text-sm font-medium text-gray-700">Categorías</label>
+    <div id="categories-container" class="mt-1 grid grid-cols-2 gap-2">
+      <!-- Las categorías se cargarán dinámicamente -->
+      <div class="flex justify-center items-center h-10">
+        <span class="text-gray-400 text-sm">Cargando categorías...</span>
+      </div>
+    </div>
   </div>
 
-  <div class="pt-2">
+  <div>
+    <label class="block text-sm font-medium text-gray-700">Etiquetas</label>
+    <div id="tags-container" class="mt-1 grid grid-cols-2 gap-2">
+      <!-- Las etiquetas se cargarán dinámicamente -->
+      <div class="flex justify-center items-center h-10">
+        <span class="text-gray-400 text-sm">Cargando etiquetas...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
     <button
-      type="submit"
-      id="submit-btn"
-      class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        type="button"
+        id="reset-btn"
+        class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md mr-2 hidden"
     >
-      Agregar Producto
+      Cancelar
+    </button>
+    <button
+        type="submit"
+        id="submit-btn"
+        class="bg-blue-600 text-white px-4 py-2 rounded-md"
+    >
+      Añadir Producto
     </button>
   </div>
 </form>
 
 <script>
+  import { fetchCategories } from "../../services/category.service";
+  import { fetchTags } from "../../services/tag.service";
+  import {
+    createProduct,
+    updateProduct,
+    addCategoryToProduct,
+    removeCategoryFromProduct,
+    addTagToProduct,
+    removeTagFromProduct
+  } from "../../services/productService";
   import Swal from "sweetalert2";
-  import { createProduct, updateProduct } from "../../services/productService";
-  import type { Product } from "../../types/Product";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const productForm = document.getElementById(
-      "product-form"
-    ) as HTMLFormElement;
+  // Referencias al DOM
+  const productForm = document.getElementById("product-form");
+  const productIdInput = document.getElementById("product-id");
+  const resetButton = document.getElementById("reset-btn");
+  const submitButton = document.getElementById("submit-btn");
+  const categoriesContainer = document.getElementById("categories-container");
+  const tagsContainer = document.getElementById("tags-container");
 
-    if (productForm) {
-      productForm.addEventListener("submit", async (e: Event) => {
-        e.preventDefault();
+  // Estado del formulario
+  let isEditing = false;
+  let selectedCategories = new Set();
+  let selectedTags = new Set();
 
-        // Recoger datos del formulario
-        const formData = new FormData(productForm);
-        const productData: Record<string, any> = Object.fromEntries(formData);
+  // Cargar categorías y etiquetas cuando se carga la página
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // Cargar categorías
+      const categories = await fetchCategories();
+      renderCategoryCheckboxes(categories);
 
-        // Convertir valores
-        if (productData.price) {
-          productData.price = parseFloat(productData.price);
-        }
-
-        if (productData.quantity) {
-          productData.quantity = parseInt(productData.quantity);
-        }
-
-        try {
-          const isUpdate = productData.id && productData.id.trim() !== "";
-
-          if (isUpdate) {
-            await updateProduct(productData.id, productData as Product);
-            Swal.fire({
-              icon: "success",
-              title: "¡Actualizado!",
-              text: "Producto actualizado correctamente",
-            });
-          } else {
-            await createProduct(productData as Product);
-            Swal.fire({
-              icon: "success",
-              title: "¡Agregado!",
-              text: "Producto agregado correctamente",
-            });
-          }
-
-          // Resetear el formulario
-          productForm.reset();
-          (document.getElementById("product-id") as HTMLInputElement).value =
-            "";
-          const submitButton = document.getElementById("submit-btn");
-          if (submitButton) {
-            submitButton.textContent = "Agregar Producto";
-          }
-        } catch (error) {
-          console.error("Error saving product:", error);
-          Swal.fire({
-            icon: "error",
-            title: "¡Error!",
-            text: isUpdate
-              ? "No se pudo actualizar el producto"
-              : "No se pudo agregar el producto",
-          });
-        }
+      // Cargar etiquetas
+      const tags = await fetchTags();
+      renderTagCheckboxes(tags);
+    } catch (error) {
+      console.error("Error loading form data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudieron cargar los datos del formulario",
       });
     }
   });
+
+  // Manejar envío del formulario
+  productForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Recopilar datos del formulario
+    const formData = {
+      name: document.getElementById("product-name").value,
+      price: parseFloat(document.getElementById("product-price").value),
+      description: document.getElementById("product-description").value,
+      quantity: document.getElementById("product-quantity").value
+          ? parseInt(document.getElementById("product-quantity").value)
+          : null,
+      sku: document.getElementById("product-sku").value
+    };
+
+    try {
+      let productId;
+
+      if (isEditing) {
+        // Actualizar producto existente
+        productId = productIdInput.value;
+        await updateProduct(productId, formData);
+      } else {
+        // Crear nuevo producto
+        const newProduct = await createProduct(formData);
+        productId = newProduct.id;
+      }
+
+      // Gestionar categorías
+      await updateProductCategories(productId);
+
+      // Gestionar etiquetas
+      await updateProductTags(productId);
+
+      // Mostrar mensaje de éxito
+      Swal.fire({
+        icon: "success",
+        title: isEditing ? "¡Actualizado!" : "¡Creado!",
+        text: isEditing
+            ? "El producto ha sido actualizado correctamente"
+            : "El producto ha sido creado correctamente",
+      });
+
+      // Resetear formulario
+      resetForm();
+
+    } catch (error) {
+      console.error("Error saving product:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: isEditing
+            ? "No se pudo actualizar el producto"
+            : "No se pudo crear el producto",
+      });
+    }
+  });
+
+  // Botón Cancelar (volver al modo creación)
+  resetButton.addEventListener("click", () => {
+    resetForm();
+  });
+
+  // Renderizar checkboxes de categorías
+  function renderCategoryCheckboxes(categories) {
+    if (!categoriesContainer) return;
+
+    categoriesContainer.innerHTML = "";
+
+    if (!categories || categories.length === 0) {
+      categoriesContainer.innerHTML = `
+        <div class="col-span-2 flex justify-center items-center h-10">
+          <span class="text-gray-400 text-sm">No hay categorías disponibles</span>
+        </div>
+      `;
+      return;
+    }
+
+    categories.forEach(category => {
+      const checkboxId = `category-${category.id}`;
+      const checkboxWrapper = document.createElement("div");
+      checkboxWrapper.className = "flex items-center";
+      checkboxWrapper.innerHTML = `
+        <input type="checkbox" id="${checkboxId}" data-id="${category.id}" class="category-checkbox mr-2">
+        <label for="${checkboxId}" class="text-sm">${category.name}</label>
+      `;
+
+      categoriesContainer.appendChild(checkboxWrapper);
+
+      // Agregar event listener
+      const checkbox = checkboxWrapper.querySelector(`#${checkboxId}`);
+      checkbox.addEventListener("change", (e) => {
+        const categoryId = parseInt(e.target.dataset.id);
+        if (e.target.checked) {
+          selectedCategories.add(categoryId);
+        } else {
+          selectedCategories.delete(categoryId);
+        }
+      });
+    });
+  }
+
+  // Renderizar checkboxes de etiquetas
+  function renderTagCheckboxes(tags) {
+    if (!tagsContainer) return;
+
+    tagsContainer.innerHTML = "";
+
+    if (!tags || tags.length === 0) {
+      tagsContainer.innerHTML = `
+        <div class="col-span-2 flex justify-center items-center h-10">
+          <span class="text-gray-400 text-sm">No hay etiquetas disponibles</span>
+        </div>
+      `;
+      return;
+    }
+
+    tags.forEach(tag => {
+      const checkboxId = `tag-${tag.id}`;
+      const checkboxWrapper = document.createElement("div");
+      checkboxWrapper.className = "flex items-center";
+      checkboxWrapper.innerHTML = `
+        <input type="checkbox" id="${checkboxId}" data-id="${tag.id}" class="tag-checkbox mr-2">
+        <label for="${checkboxId}" class="text-sm">${tag.name}</label>
+      `;
+
+      tagsContainer.appendChild(checkboxWrapper);
+
+      // Agregar event listener
+      const checkbox = checkboxWrapper.querySelector(`#${checkboxId}`);
+      checkbox.addEventListener("change", (e) => {
+        const tagId = parseInt(e.target.dataset.id);
+        if (e.target.checked) {
+          selectedTags.add(tagId);
+        } else {
+          selectedTags.delete(tagId);
+        }
+      });
+    });
+  }
+
+  // Rellenar checkboxes según la configuración actual del producto
+  function fillCategoryCheckboxes(productCategoryIds = []) {
+    document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+      const categoryId = parseInt(checkbox.dataset.id);
+      if (productCategoryIds.includes(categoryId)) {
+        checkbox.checked = true;
+        selectedCategories.add(categoryId);
+      }
+    });
+  }
+
+  function fillTagCheckboxes(productTagIds = []) {
+    document.querySelectorAll('.tag-checkbox').forEach(checkbox => {
+      const tagId = parseInt(checkbox.dataset.id);
+      if (productTagIds.includes(tagId)) {
+        checkbox.checked = true;
+        selectedTags.add(tagId);
+      }
+    });
+  }
+
+  // Actualizar categorías asignadas a un producto
+  async function updateProductCategories(productId) {
+    try {
+      // Obtener las categorías actualmente asignadas al producto
+      const product = await fetch(`http://localhost:8080/api/products/${productId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('authToken')}`
+        }
+      }).then(res => res.json());
+
+      const currentCategoryIds = product.productCategories?.map(pc => pc.category.id) || [];
+
+      // Categorías a añadir (están en selectedCategories pero no en currentCategoryIds)
+      for (const categoryId of selectedCategories) {
+        if (!currentCategoryIds.includes(categoryId)) {
+          await addCategoryToProduct(productId, categoryId);
+        }
+      }
+
+      // Categorías a eliminar (están en currentCategoryIds pero no en selectedCategories)
+      for (const categoryId of currentCategoryIds) {
+        if (!selectedCategories.has(categoryId)) {
+          await removeCategoryFromProduct(productId, categoryId);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating product categories:", error);
+      throw error;
+    }
+  }
+
+  // Actualizar etiquetas asignadas a un producto
+  async function updateProductTags(productId) {
+    try {
+      // Obtener las etiquetas actualmente asignadas al producto
+      const product = await fetch(`http://localhost:8080/api/products/${productId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('authToken')}`
+        }
+      }).then(res => res.json());
+
+      const currentTagIds = product.productTags?.map(pt => pt.tag.id) || [];
+
+      // Etiquetas a añadir (están en selectedTags pero no en currentTagIds)
+      for (const tagId of selectedTags) {
+        if (!currentTagIds.includes(tagId)) {
+          await addTagToProduct(productId, tagId);
+        }
+      }
+
+      // Etiquetas a eliminar (están en currentTagIds pero no en selectedTags)
+      for (const tagId of currentTagIds) {
+        if (!selectedTags.has(tagId)) {
+          await removeTagFromProduct(productId, tagId);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating product tags:", error);
+      throw error;
+    }
+  }
+
+  // Función para preparar el formulario para editar un producto existente
+  export function prepareFormForEdit(product) {
+    if (!product) return;
+
+    // Establecer estado de edición
+    isEditing = true;
+
+    // Llenar campos del formulario
+    productIdInput.value = product.id;
+    document.getElementById("product-name").value = product.name;
+    document.getElementById("product-price").value = product.price;
+    document.getElementById("product-description").value = product.description || "";
+    document.getElementById("product-quantity").value = product.quantity || "";
+    document.getElementById("product-sku").value = product.sku || "";
+
+    // Seleccionar categorías asignadas
+    const categoryIds = product.productCategories?.map(pc => pc.category.id) || [];
+    fillCategoryCheckboxes(categoryIds);
+
+    // Seleccionar etiquetas asignadas
+    const tagIds = product.productTags?.map(pt => pt.tag.id) || [];
+    fillTagCheckboxes(tagIds);
+
+    // Actualizar UI
+    submitButton.textContent = "Actualizar Producto";
+    resetButton.classList.remove("hidden");
+  }
+
+  // Resetear formulario a estado inicial
+  function resetForm() {
+    productForm.reset();
+    productIdInput.value = "";
+    isEditing = false;
+    selectedCategories.clear();
+    selectedTags.clear();
+
+    // Desmarcar todos los checkboxes
+    document.querySelectorAll('.category-checkbox, .tag-checkbox').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Restaurar UI
+    submitButton.textContent = "Añadir Producto";
+    resetButton.classList.add("hidden");
+  }
 </script>

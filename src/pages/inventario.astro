@@ -2,8 +2,9 @@
 import ProductTable from "@/components/inventario/ProductTable.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 import ProductForm from "@/components/inventario/ProductForm.astro";
+import AuthGuard from "../components/auth/AuthGuard.astro";
 ---
-
+<AuthGuard requireAdmin={false} />
 <MainLayout title="Inventario">
   <div class="inventory-container">
     <h1 class="text-3xl font-bold mb-8">Gestión de Inventario</h1>
